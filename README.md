@@ -71,3 +71,7 @@ value.
 * events_statements_summary_by_digest should have only one row per DIGEST_TEXT / SCHEMA_NAME. Unfortunately I've seen that this is not the case and multiple row may be present. This has been reported. See http://bugs.mysql.com/bug.php?id=79533. In the meantime if multiple rows are found with the same DIGEST_TEXT/SCHEMA_NAME the values are merged together.
 
 * events_statements_summary_by_digest has a DIGEST column which represents a unique key (with the SCHEMA_NAME) to identify queries. However, this digest may not be the same for the same query on 2 different servers due to the way the optimiser works. Consequently queryprofiler takes an MD5 checksum of the QUERY_TEXT and uses that instead. I should really file a feature requesting that the generated query digest is calculated consistently as that would avoid this extra operation.
+
+# Sample Output
+
+For sample output look at the file of the same name: sample-output.txt
