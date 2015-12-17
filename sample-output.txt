@@ -1,0 +1,97 @@
+Example run:
+
+$ ./queryprofiler --interval=10 --iterations=5 --top-n=5 "$DSN1" "$DSN2"
+2015/12/17 16:18:21 Configuration: Showing top 5 queries (by total elapsed time)
+2015/12/17 16:18:21 Configuration: Collecting 5 metrics every 10 second(s)
+2015/12/17 16:18:21 Configuration: Query Filter:
+2015/12/17 16:18:21 === Phase I ===
+2015/12/17 16:18:21 Connecting to 2 servers...
+2015/12/17 16:18:21 0: 'user'@'server1.example.com' connected. Version: 5.6.25-log
+2015/12/17 16:18:21 1: 'user'@'server2.example.com' connected. Version: 5.7.10-log
+2015/12/17 16:18:21 === Phase II ===
+2015/12/17 16:18:21 Collecting data 5 times...
+2015/12/17 16:18:21   1: Collected rows: 0: 2734, 1: 9990
+2015/12/17 16:18:31   2: Collected rows: 0: 3155, 1: 9990
+2015/12/17 16:18:42   3: Collected rows: 0: 3506, 1: 9990
+2015/12/17 16:18:52   4: Collected rows: 0: 3817, 1: 9990
+2015/12/17 16:19:02   5: Collected rows: 0: 4119, 1: 9990
+2015/12/17 16:19:12 Collecting finished.
+2015/12/17 16:19:12 Collection sizes:
+2015/12/17 16:19:12 0: Have 5 entries, first entry: 2734 rows, last entry: 4119 rows
+2015/12/17 16:19:12 1: Have 5 entries, first entry: 9990 rows, last entry: 9990 rows
+2015/12/17 16:19:12 Converting collection information to samples...
+2015/12/17 16:19:12 0: Generated 4 sample(s)
+2015/12/17 16:19:12 1: Generated 4 sample(s)
+2015/12/17 16:19:12 === Phase III ===
+2015/12/17 16:19:12 Determining the longest running queries over collection period...
+2015/12/17 16:19:12 3.1 Making a single sample from the first/last collections of connection: 'user'@'server1.example.com'
+2015/12/17 16:19:12 3.2 Sorting results
+2015/12/17 16:19:12 === Phase IV ===
+2015/12/17 16:19:12 Printing metrics from calculated samples
+2015/12/17 16:19:12 Looking at top 5 queries
+2015/12/17 16:19:12 Query 1: SELECT ... actual query removed ...
+2015/12/17 16:19:12 Server:            'user'@'server1.example.com'             | 'user'@'server2.example.com'
+2015/12/17 16:19:12   Avg queries:      866, σ 20.3                             | 852, σ 25.5
+2015/12/17 16:19:12   Avg QPS:          84.1 qps, σ 2.04                        | 82.8 qps, σ 2.61
+2015/12/17 16:19:12   Avg Latency:      6.306 ms, σ 40.05 µs                    | 5.857 ms, σ 91.54 µs
+2015/12/17 16:19:12   Avg errors:       0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg warnings:     0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg RowsAffected: 0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg RowsSent:     92.25 k, σ 2.24 k                       | 90.47 k, σ 2.63 k
+2015/12/17 16:19:12   Avg RowsExamined: 370.84 k, σ 9.01 k                      | 363.66 k, σ 10.58 k
+2015/12/17 16:19:12   Avg SelectScans:  866, σ 20.5                             | 852, σ 25.5
+2015/12/17 16:19:12   Avg NoIndexUsed:  866, σ 20.3                             | 852, σ 25.5
+2015/12/17 16:19:12   Avg NoGoodIndex:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12 Query 2: SELECT ... actual query removed ...
+2015/12/17 16:19:12 Server:            'user'@'server1.example.com'             | 'user'@'server2.example.com'
+2015/12/17 16:19:12   Avg queries:      1.18 k, σ 306                           | 1.36 k, σ 177
+2015/12/17 16:19:12   Avg QPS:          114 qps, σ 29.6                         | 132 qps, σ 16.9
+2015/12/17 16:19:12   Avg Latency:      943.6 µs, σ 21.96 µs                    | 984.7 µs, σ 16.85 µs
+2015/12/17 16:19:12   Avg errors:       0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg warnings:     1.83 k, σ 585                           | 2.58 k, σ 416
+2015/12/17 16:19:12   Avg RowsAffected: 0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg RowsSent:     11.14 k, σ 2.36 k                       | 12.41 k, σ 1.37 k
+2015/12/17 16:19:12   Avg RowsExamined: 23.23 k, σ 4.92 k                       | 25.76 k, σ 2.81 k
+2015/12/17 16:19:12   Avg SelectScans:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg NoIndexUsed:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg NoGoodIndex:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12 Query 3: SELECT ... actual query removed ...
+2015/12/17 16:19:12 Server:            'user'@'server1.example.com'             | 'user'@'server2.example.com'
+2015/12/17 16:19:12   Avg queries:      52.5, σ 13.3                            | 45.2, σ 13.8
+2015/12/17 16:19:12   Avg QPS:          5.10 qps, σ 1.29                        | 4.40 qps, σ 1.35
+2015/12/17 16:19:12   Avg Latency:      13.66 ms, σ 3.057 ms                    | 10.83 ms, σ 3.007 ms
+2015/12/17 16:19:12   Avg errors:       0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg warnings:     0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg RowsAffected: 0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg RowsSent:     3.56 k, σ 3.40 k                        | 1.28 k, σ 771
+2015/12/17 16:19:12   Avg RowsExamined: 3.56 k, σ 3.40 k                        | 1.28 k, σ 771
+2015/12/17 16:19:12   Avg SelectScans:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg NoIndexUsed:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg NoGoodIndex:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12 Query 4: ... actual query removed ...
+2015/12/17 16:19:12 Server:            'user'@'server1.example.com'             | 'user'@'server2.example.com'
+2015/12/17 16:19:12   Avg queries:      892, σ 14.8                             | 896, σ 28.8
+2015/12/17 16:19:12   Avg QPS:          86.6 qps, σ 1.40                        | 87.0 qps, σ 2.92
+2015/12/17 16:19:12   Avg Latency:      692.8 µs, σ 3.830 µs                    | 751.4 µs, σ 9.714 µs
+2015/12/17 16:19:12   Avg errors:       0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg warnings:     0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg RowsAffected: 0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg RowsSent:     892, σ 14.8                             | 896, σ 28.8
+2015/12/17 16:19:12   Avg RowsExamined: 892, σ 14.8                             | 896, σ 28.8
+2015/12/17 16:19:12   Avg SelectScans:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg NoIndexUsed:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg NoGoodIndex:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12 Query 5: SELECT ... actual query removed ...
+2015/12/17 16:19:12 Server:            'user'@'server1.example.com'             | 'user'@'server2.example.com'
+2015/12/17 16:19:12   Avg queries:      467, σ 38.7                             | 476, σ 32.7
+2015/12/17 16:19:12   Avg QPS:          45.4 qps, σ 3.72                        | 46.3 qps, σ 3.22
+2015/12/17 16:19:12   Avg Latency:      974.6 µs, σ 14.30 µs                    | 1.063 ms, σ 35.14 µs
+2015/12/17 16:19:12   Avg errors:       0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg warnings:     0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg RowsAffected: 0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg RowsSent:     6.06 k, σ 787                           | 6.48 k, σ 755
+2015/12/17 16:19:12   Avg RowsExamined: 6.06 k, σ 787                           | 6.48 k, σ 755
+2015/12/17 16:19:12   Avg SelectScans:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg NoIndexUsed:  0, σ 0                                  | 0, σ 0
+2015/12/17 16:19:12   Avg NoGoodIndex:  0, σ 0                                  | 0, σ 0
+$ 
