@@ -57,24 +57,24 @@ type Event struct {
 	//	AVG_TIMER_WAIT              uint64
 	//	MAX_TIMER_WAIT              uint64
 	//	SUM_LOCK_TIME               uint64
-	SUM_ERRORS   uint64
-	SUM_WARNINGS uint64
-	//	SUM_ROWS_AFFECTED           uint64
-	//	SUM_ROWS_SENT               uint64
-	//	SUM_ROWS_EXAMINED           uint64
+	SUM_ERRORS        uint64
+	SUM_WARNINGS      uint64
+	SUM_ROWS_AFFECTED uint64
+	SUM_ROWS_SENT     uint64
+	SUM_ROWS_EXAMINED uint64
 	//	SUM_CREATED_TMP_DISK_TABLES uint64
 	//	SUM_CREATED_TMP_TABLES      uint64
 	//	SUM_SELECT_FULL_JOIN        uint64
 	//	SUM_SELECT_FULL_RANGE_JOIN  uint64
 	//	SUM_SELECT_RANGE            uint64
 	//	SUM_SELECT_RANGE_CHECK      uint64
-	//	SUM_SELECT_SCAN             uint64
+	SUM_SELECT_SCAN uint64
 	//	SUM_SORT_MERGE_PASSES       uint64
 	//	SUM_SORT_RANGE              uint64
 	//	SUM_SORT_ROWS               uint64
 	//	SUM_SORT_SCAN               uint64
-	//	SUM_NO_INDEX_USED           uint64
-	//	SUM_NO_GOOD_INDEX_USED      uint64
+	SUM_NO_INDEX_USED      uint64
+	SUM_NO_GOOD_INDEX_USED uint64
 	//	FIRST_SEEN                  string
 	//	LAST_SEEN                   string
 }
@@ -97,6 +97,12 @@ func (e Event) String() string {
 		fmt.Sprintf("SUM_TIMER_WAIT: %+v", e.SUM_TIMER_WAIT),
 		fmt.Sprintf("SUM_ERRORS: %+v", e.SUM_ERRORS),
 		fmt.Sprintf("SUM_WARNINGS: %+v", e.SUM_WARNINGS),
+		fmt.Sprintf("SUM_ROWS_AFFECTED: %+v", e.SUM_ROWS_AFFECTED),
+		fmt.Sprintf("SUM_ROWS_SENT: %+v", e.SUM_ROWS_SENT),
+		fmt.Sprintf("SUM_ROWS_EXAMINED: %+v", e.SUM_ROWS_EXAMINED),
+		fmt.Sprintf("SUM_SELECT_SCAN: %+v", e.SUM_SELECT_SCAN),
+		fmt.Sprintf("SUM_NO_INDEX_USED: %+v", e.SUM_NO_INDEX_USED),
+		fmt.Sprintf("SUM_NO_GOOD_INDEX_USED: %+v", e.SUM_NO_GOOD_INDEX_USED),
 	}
 
 	//	s += fmt.Sprintf("MD5_DIGEST: %+v\n", e.MD5_DIGEST)
@@ -108,7 +114,6 @@ func (e Event) String() string {
 	//	s += fmt.Sprintf("MAX_TIMER_WAIT: %+v\n", e.MAX_TIMER_WAIT)
 	//	s += fmt.Sprintf("SUM_LOCK_TIME: %+v\n",  e.SUM_LOCK_TIME)
 
-	//	s += fmt.Sprintf("SUM_ROWS_AFFECTED: %+v\n", e.SUM_ROWS_AFFECTED)
 	//	s += fmt.Sprintf("SUM_ROWS_SENT: %+v\n",     e.SUM_ROWS_SENT)
 	//	s += fmt.Sprintf("SUM_ROWS_EXAMINED: %+v\n", e.SUM_ROWS_EXAMINED)
 	//	s += fmt.Sprintf("SUM_CREATED_TMP_DISK_TABLES: %+v\n", e.SUM_CREATED_TMP_DISK_TABLES)
@@ -117,13 +122,10 @@ func (e Event) String() string {
 	//	s += fmt.Sprintf("SUM_SELECT_FULL_RANGE_JOIN: %+v\n",  e.SUM_SELECT_FULL_RANGE_JOIN)
 	//	s += fmt.Sprintf("SUM_SELECT_RANGE: %+v\n",            e.SUM_SELECT_RANGE)
 	//	s += fmt.Sprintf("SUM_SELECT_RANGE_CHECK: %+v\n",      e.SUM_SELECT_RANGE_CHECK)
-	//	s += fmt.Sprintf("SUM_SELECT_SCAN: %+v\n",             e.SUM_SELECT_SCAN)
 	//	s += fmt.Sprintf("SUM_SORT_MERGE_PASSES: %+v\n",       e.SUM_SORT_MERGE_PASSES)
 	//	s += fmt.Sprintf("SUM_SORT_RANGE: %+v\n",              e.SUM_SORT_RANGE)
 	//	s += fmt.Sprintf("SUM_SORT_ROWS: %+v\n",               e.SUM_SORT_ROWS)
 	//	s += fmt.Sprintf("SUM_SORT_SCAN: %+v\n",               e.SUM_SORT_SCAN)
-	//	s += fmt.Sprintf("SUM_NO_INDEX_USED: %+v\n",           e.SUM_NO_INDEX_USED)
-	//	s += fmt.Sprintf("SUM_NO_GOOD_INDEX_USED: %+v\n",      e.SUM_NO_GOOD_INDEX_USED)
 	//	s += fmt.Sprintf("FIRST_SEEN: %+v\n",                  e.FIRST_SEEN)
 	//	s += fmt.Sprintf("LAST_SEEN: %+v\n",                   e.LAST_SEEN)
 
@@ -144,34 +146,34 @@ func CollectEvents(conn *connection.Connection, ignorePerformanceSchema bool, qu
 	query := `
 SELECT	MD5(DIGEST_TEXT) AS 'MD5_DIGEST',
 	SCHEMA_NAME,
-/*	DIGEST, */
+--	DIGEST,
 	DIGEST_TEXT,
 	COUNT_STAR,
-	SUM_TIMER_WAIT, /*
-	MIN_TIMER_WAIT,
-	AVG_TIMER_WAIT,
-	MAX_TIMER_WAIT,
-	SUM_LOCK_TIME, */
+	SUM_TIMER_WAIT,
+--	MIN_TIMER_WAIT,
+--	AVG_TIMER_WAIT,
+--	MAX_TIMER_WAIT,
+--	SUM_LOCK_TIME,
 	SUM_ERRORS,
-	SUM_WARNINGS /*,
+	SUM_WARNINGS,
 	SUM_ROWS_AFFECTED,
 	SUM_ROWS_SENT,
 	SUM_ROWS_EXAMINED,
-	SUM_CREATED_TMP_DISK_TABLES,
-	SUM_CREATED_TMP_TABLES,
-	SUM_SELECT_FULL_JOIN,
-	SUM_SELECT_FULL_RANGE_JOIN,
-	SUM_SELECT_RANGE,
-	SUM_SELECT_RANGE_CHECK,
+--	SUM_CREATED_TMP_DISK_TABLES,
+--	SUM_CREATED_TMP_TABLES,
+--	SUM_SELECT_FULL_JOIN,
+--	SUM_SELECT_FULL_RANGE_JOIN,
+--	SUM_SELECT_RANGE,
+--	SUM_SELECT_RANGE_CHECK,
 	SUM_SELECT_SCAN,
-	SUM_SORT_MERGE_PASSES,
-	SUM_SORT_RANGE,
-	SUM_SORT_ROWS,
-	SUM_SORT_SCAN,
+--	SUM_SORT_MERGE_PASSES,
+--	SUM_SORT_RANGE,
+--	SUM_SORT_ROWS,
+--	SUM_SORT_SCAN,
 	SUM_NO_INDEX_USED,
-	SUM_NO_GOOD_INDEX_USED,
-	FIRST_SEEN,
-	LAST_SEEN */
+	SUM_NO_GOOD_INDEX_USED
+--	FIRST_SEEN,
+--	LAST_SEEN
 FROM	events_statements_summary_by_digest
 `
 
@@ -201,29 +203,30 @@ FROM	events_statements_summary_by_digest
 			&row.COUNT_STAR,
 			&row.SUM_TIMER_WAIT,
 			&row.SUM_ERRORS,
-			&row.SUM_WARNINGS); err != nil {
+			&row.SUM_WARNINGS,
+			&row.SUM_ROWS_AFFECTED,
+			&row.SUM_ROWS_SENT,
+			&row.SUM_ROWS_EXAMINED,
+			&row.SUM_SELECT_SCAN,
+			&row.SUM_NO_INDEX_USED,
+			&row.SUM_NO_GOOD_INDEX_USED,
+		); err != nil {
 			/*
 				&row.MIN_TIMER_WAIT,
 				&row.AVG_TIMER_WAIT,
 				&row.MAX_TIMER_WAIT,
 				&row.SUM_LOCK_TIME,
 
-				&row.SUM_ROWS_AFFECTED,
-				&row.SUM_ROWS_SENT,
-				&row.SUM_ROWS_EXAMINED,
 				&row.SUM_CREATED_TMP_DISK_TABLES,
 				&row.SUM_CREATED_TMP_TABLES,
 				&row.SUM_SELECT_FULL_JOIN,
 				&row.SUM_SELECT_FULL_RANGE_JOIN,
 				&row.SUM_SELECT_RANGE,
 				&row.SUM_SELECT_RANGE_CHECK,
-				&row.SUM_SELECT_SCAN,
 				&row.SUM_SORT_MERGE_PASSES,
 				&row.SUM_SORT_RANGE,
 				&row.SUM_SORT_ROWS,
 				&row.SUM_SORT_SCAN,
-				&row.SUM_NO_INDEX_USED,
-				&row.SUM_NO_GOOD_INDEX_USED,
 				&row.FIRST_SEEN,
 				&row.LAST_SEEN  ); err != nil { */
 			log.Fatal(err)
@@ -270,6 +273,12 @@ func Merge(this, that Event) Event {
 	newOne.SUM_TIMER_WAIT += that.SUM_TIMER_WAIT
 	newOne.SUM_ERRORS += that.SUM_ERRORS
 	newOne.SUM_WARNINGS += that.SUM_WARNINGS
+	newOne.SUM_ROWS_AFFECTED += that.SUM_ROWS_AFFECTED
+	newOne.SUM_ROWS_SENT += that.SUM_ROWS_SENT
+	newOne.SUM_ROWS_EXAMINED += that.SUM_ROWS_EXAMINED
+	newOne.SUM_SELECT_SCAN += that.SUM_SELECT_SCAN
+	newOne.SUM_NO_INDEX_USED += that.SUM_NO_INDEX_USED
+	newOne.SUM_NO_GOOD_INDEX_USED += that.SUM_NO_GOOD_INDEX_USED
 
 	return newOne
 }

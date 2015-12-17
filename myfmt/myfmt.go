@@ -110,8 +110,10 @@ func FloatNumber(t float64) string {
 	var v string
 
 	switch {
+	case t == 0: // 0
+		v = fmt.Sprintf("%.0f", t)
 	case t >= 1000: // 9999
-		v = fmt.Sprintf("%.2f k", t / 1000)
+		v = fmt.Sprintf("%.2f k", t/1000)
 	case t >= 100: // 999
 		v = fmt.Sprintf("%.0f", t)
 	case t >= 10: // 99.9

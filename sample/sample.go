@@ -47,29 +47,29 @@ import (
 // Row has the values of a collection between 2 points in time.
 // COUNT_* AND SUM_* fields are values below are differences from the next value compared to the collected time.
 type Row struct {
-	Key            querykey.QueryKey
-	SUM_TIMER_WAIT uint64
-	COUNT_STAR     uint64
-	SUM_ERRORS     uint64
-	SUM_WARNINGS   uint64
+	Key                    querykey.QueryKey
+	SUM_TIMER_WAIT         uint64
+	COUNT_STAR             uint64
+	SUM_ERRORS             uint64
+	SUM_WARNINGS           uint64
+	SUM_ROWS_AFFECTED      uint64
+	SUM_ROWS_SENT          uint64
+	SUM_ROWS_EXAMINED      uint64
+	SUM_SELECT_SCAN        uint64
+	SUM_NO_INDEX_USED      uint64
+	SUM_NO_GOOD_INDEX_USED uint64
 
 	//	SUM_LOCK_TIME               uint64
-	//	SUM_ROWS_AFFECTED           uint64
-	//	SUM_ROWS_SENT               uint64
-	//	SUM_ROWS_EXAMINED           uint64
 	//	SUM_CREATED_TMP_DISK_TABLES uint64
 	//	SUM_CREATED_TMP_TABLES      uint64
 	//	SUM_SELECT_FULL_JOIN        uint64
 	//	SUM_SELECT_FULL_RANGE_JOIN  uint64
 	//	SUM_SELECT_RANGE            uint64
 	//	SUM_SELECT_RANGE_CHECK      uint64
-	//	SUM_SELECT_SCAN             uint64
 	//	SUM_SORT_MERGE_PASSES       uint64
 	//	SUM_SORT_RANGE              uint64
 	//	SUM_SORT_ROWS               uint64
 	//	SUM_SORT_SCAN               uint64
-	//	SUM_NO_INDEX_USED           uint64
-	//	SUM_NO_GOOD_INDEX_USED      uint64
 }
 
 // Sample has the rows between 2 collections plus the period they were collected over
@@ -88,13 +88,37 @@ type SamplesSlice []Samples
 func (s Sample) Print() {
 	log.Println(fmt.Sprintf("StartTime:%+v, Duration:%+v", s.StartTime, s.Duration))
 	for i := range s.Rows {
-		log.Println(fmt.Sprintf("[%d]: Key: %+v, SUM_TIMER_WAIT: %+v, COUNT_STAR: %+v, SUM_ERRORS: %+v, SUM_WARNINGS: %+v",
+		log.Println(fmt.Sprintf("[%d]: Key: %+v, SUM_TIMER_WAIT: %+v, COUNT_STAR: %+v, SUM_ERRORS: %+v, SUM_WARNINGS: %+v, SUM_ROWS_AFFECTED: %+v, SUM_ROWS_SENT: %+v, SUM_ROWS_EXAMINED: %+v, SUM_SELECT_SCAN: %+v, SUM_NO_INDEX_USED: %+v, SUM_NO_GOOD_INDEX_USED: %+v",
 			i,
 			s.Rows[i].Key,
 			s.Rows[i].SUM_TIMER_WAIT,
 			s.Rows[i].COUNT_STAR,
 			s.Rows[i].SUM_ERRORS,
-			s.Rows[i].SUM_WARNINGS))
+			s.Rows[i].SUM_WARNINGS,
+			s.Rows[i].SUM_ROWS_AFFECTED,
+			s.Rows[i].SUM_ROWS_SENT,
+			s.Rows[i].SUM_ROWS_EXAMINED,
+			s.Rows[i].SUM_SELECT_SCAN,
+			s.Rows[i].SUM_NO_INDEX_USED,
+			s.Rows[i].SUM_NO_GOOD_INDEX_USED))
+	}
+}
+
+var metricNames []string
+
+func init() {
+	metricNames = []string{
+		"queries",
+		"QPS",
+		"Latency",
+		"errors",
+		"warnings",
+		"RowsAffected",
+		"RowsSent",
+		"RowsExamined",
+		"SelectScans",
+		"NoIndexUsed",
+		"NoGoodIndex",
 	}
 }
 
@@ -156,29 +180,29 @@ func StatementRowDiff(e1, e2 event.Event, duration time.Duration) (Row, error) {
 	//	log.Println("  e2:", e2)
 
 	s := Row{
-		Key:            e1.Key,
-		COUNT_STAR:     e2.COUNT_STAR - e1.COUNT_STAR,
-		SUM_TIMER_WAIT: e2.SUM_TIMER_WAIT - e1.SUM_TIMER_WAIT,
-		SUM_ERRORS:     e2.SUM_ERRORS - e1.SUM_ERRORS,
-		SUM_WARNINGS:   e2.SUM_WARNINGS - e1.SUM_WARNINGS,
+		Key:                    e1.Key,
+		COUNT_STAR:             e2.COUNT_STAR - e1.COUNT_STAR,
+		SUM_TIMER_WAIT:         e2.SUM_TIMER_WAIT - e1.SUM_TIMER_WAIT,
+		SUM_ERRORS:             e2.SUM_ERRORS - e1.SUM_ERRORS,
+		SUM_WARNINGS:           e2.SUM_WARNINGS - e1.SUM_WARNINGS,
+		SUM_ROWS_AFFECTED:      e2.SUM_ROWS_AFFECTED - e1.SUM_ROWS_AFFECTED,
+		SUM_ROWS_SENT:          e2.SUM_ROWS_SENT - e1.SUM_ROWS_SENT,
+		SUM_ROWS_EXAMINED:      e2.SUM_ROWS_EXAMINED - e1.SUM_ROWS_EXAMINED,
+		SUM_SELECT_SCAN:        e2.SUM_SELECT_SCAN - e1.SUM_SELECT_SCAN,
+		SUM_NO_INDEX_USED:      e2.SUM_NO_INDEX_USED - e1.SUM_NO_INDEX_USED,
+		SUM_NO_GOOD_INDEX_USED: e2.SUM_NO_GOOD_INDEX_USED - e1.SUM_NO_GOOD_INDEX_USED,
 
 		//		SUM_LOCK_TIME:               e2.SUM_LOCK_TIME - e1.SUM_LOCK_TIME,
-		//		SUM_ROWS_AFFECTED:           e2.SUM_ROWS_AFFECTED - e1.SUM_ROWS_AFFECTED,
-		//		SUM_ROWS_SENT:               e2.SUM_ROWS_SENT - e1.SUM_ROWS_SENT,
-		//		SUM_ROWS_EXAMINED:           e2.SUM_ROWS_EXAMINED - e1.SUM_ROWS_EXAMINED,
 		//		SUM_CREATED_TMP_DISK_TABLES: e2.SUM_CREATED_TMP_DISK_TABLES - e1.SUM_CREATED_TMP_DISK_TABLES,
 		//		SUM_CREATED_TMP_TABLES:      e2.SUM_CREATED_TMP_TABLES - e1.SUM_CREATED_TMP_TABLES,
 		//		SUM_SELECT_FULL_JOIN:        e2.SUM_SELECT_FULL_JOIN - e1.SUM_SELECT_FULL_JOIN,
 		//		SUM_SELECT_FULL_RANGE_JOIN:  e2.SUM_SELECT_FULL_RANGE_JOIN - e1.SUM_SELECT_FULL_RANGE_JOIN,
 		//		SUM_SELECT_RANGE:            e2.SUM_SELECT_RANGE - e1.SUM_SELECT_RANGE,
 		//		SUM_SELECT_RANGE_CHECK:      e2.SUM_SELECT_RANGE_CHECK - e1.SUM_SELECT_RANGE_CHECK,
-		//		SUM_SELECT_SCAN:             e2.SUM_SELECT_SCAN - e1.SUM_SELECT_SCAN,
 		//		SUM_SORT_MERGE_PASSES:       e2.SUM_SORT_MERGE_PASSES - e1.SUM_SORT_MERGE_PASSES,
 		//		SUM_SORT_RANGE:              e2.SUM_SORT_RANGE - e1.SUM_SORT_RANGE,
 		//		SUM_SORT_ROWS:               e2.SUM_SORT_ROWS - e1.SUM_SORT_ROWS,
 		//		SUM_SORT_SCAN:               e2.SUM_SORT_SCAN - e1.SUM_SORT_SCAN,
-		//		SUM_NO_INDEX_USED:           e2.SUM_NO_INDEX_USED - e1.SUM_NO_INDEX_USED,
-		//		SUM_NO_GOOD_INDEX_USED:      e2.SUM_NO_GOOD_INDEX_USED - e1.SUM_NO_GOOD_INDEX_USED,
 	}
 	//	log.Println("  s:", s)
 
@@ -247,8 +271,6 @@ func (s Sample) RowByKey(key querykey.QueryKey) (Row, bool) {
 
 // FindMetricsByDigest returns a metric for the digested query from the given samples.
 func (s Samples) MetricsByKey(key querykey.QueryKey) metric.NamedMetrics {
-	// log.Println(fmt.Sprintf("MetricsByKey(%v) len() = %d", &s, len(s)))
-
 	named := make(metric.NamedMetrics)
 
 	named["queries"] = nil
@@ -256,6 +278,12 @@ func (s Samples) MetricsByKey(key querykey.QueryKey) metric.NamedMetrics {
 	named["Latency"] = nil
 	named["errors"] = nil
 	named["warnings"] = nil
+	named["RowsAffected"] = nil
+	named["RowsSent"] = nil
+	named["RowsExamined"] = nil
+	named["SelectScans"] = nil
+	named["NoIndexUsed"] = nil
+	named["NoGoodIndex"] = nil
 
 	// iterate over each sample looking for the metric values of the given key
 	for i := range s {
@@ -267,6 +295,12 @@ func (s Samples) MetricsByKey(key querykey.QueryKey) metric.NamedMetrics {
 				named["queries"] = append(named["queries"], float64(r.COUNT_STAR))
 				named["errors"] = append(named["errors"], float64(r.SUM_ERRORS))
 				named["warnings"] = append(named["warnings"], float64(r.SUM_WARNINGS))
+				named["RowsAffected"] = append(named["RowsAffected"], float64(r.SUM_ROWS_AFFECTED))
+				named["RowsSent"] = append(named["RowsSent"], float64(r.SUM_ROWS_SENT))
+				named["RowsExamined"] = append(named["RowsExamined"], float64(r.SUM_ROWS_EXAMINED))
+				named["SelectScans"] = append(named["SelectScans"], float64(r.SUM_SELECT_SCAN))
+				named["NoIndexUsed"] = append(named["NoIndexUsed"], float64(r.SUM_NO_INDEX_USED))
+				named["NoGoodIndex"] = append(named["NoGoodIndex"], float64(r.SUM_NO_GOOD_INDEX_USED))
 			}
 		}
 	}
@@ -355,14 +389,13 @@ func (s SamplesSlice) CompareMetrics(connections connection.Connections, topKeys
 
 // print a metric out
 func print(n metric.NamedMetrics) {
-	names := []string{"queries", "QPS", "Latency", "errors", "warnings"}
 
 	if n == nil {
 		return
 	}
 
-	for i := range names {
-		v := names[i]
+	for i := range metricNames {
+		v := metricNames[i]
 
 		// this should NOT be done this way (hard-coded but provide some function pointer to do this !
 		switch {
@@ -384,8 +417,8 @@ func print(n metric.NamedMetrics) {
 		case true:
 			log.Println(fmt.Sprintf("  Avg %v: %v, σ %v",
 				v,
-				n[v].Avg(),
-				n[v].StdDev()))
+				myfmt.FloatNumber(n[v].Avg()),
+				myfmt.FloatNumber(n[v].StdDev())))
 		}
 	}
 }
@@ -397,11 +430,9 @@ func formattedHeadings(n metric.NamedMetrics) []string {
 
 	s := []string{}
 
-	names := []string{"queries", "QPS", "Latency", "errors", "warnings"}
-
-	for i := range names {
-		value := fmt.Sprintf("  Avg %s:", names[i])
-		s = append(s, fmt.Sprintf("%-18s", value))
+	for i := range metricNames {
+		value := fmt.Sprintf("  Avg %s:", metricNames[i])
+		s = append(s, fmt.Sprintf("%-19s", value))
 	}
 
 	return s
@@ -416,11 +447,9 @@ func formattedValues(n metric.NamedMetrics) []string {
 
 	s := []string{}
 
-	names := []string{"queries", "QPS", "Latency", "errors", "warnings"}
-
 	// should sort maybe ?
-	for i := range names {
-		v := names[i]
+	for i := range metricNames {
+		v := metricNames[i]
 
 		// this should NOT be done this way (hard-coded but provide some function pointer to do this !
 		switch {
@@ -431,9 +460,9 @@ func formattedValues(n metric.NamedMetrics) []string {
 		case v == "Latency":
 			value = fmt.Sprintf("%s, σ %s", myfmt.FloatTime(n[v].Avg()), myfmt.FloatTime(n[v].StdDev()))
 		case true:
-			value = fmt.Sprintf("%v, σ %v", n[v].Avg(), n[v].StdDev())
+			value = fmt.Sprintf("%v, σ %v", myfmt.FloatNumber(n[v].Avg()), myfmt.FloatNumber(n[v].StdDev()))
 		}
-		s = append(s, fmt.Sprintf("%-40s", value)) // hard coded BAD
+		s = append(s, fmt.Sprintf("%-39s", value)) // hard coded BAD
 	}
 
 	return s

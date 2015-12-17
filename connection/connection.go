@@ -82,7 +82,7 @@ func (c Connection) User() string {
 
 	i := strings.Index(c.dsn, ":")
 	if i != -1 {
-		u = c.dsn[0 : i]
+		u = c.dsn[0:i]
 	}
 
 	return u
@@ -139,7 +139,7 @@ func (c *Connection) getVersion() {
 
 // return uptime in seconds. Base on collected uptime and collection time.
 func (c Connection) Uptime() uint64 {
-	var  uptime uint64
+	var uptime uint64
 
 	err := c.db.QueryRow("SELECT VARIABLE_VALUE FROM performance_schema.global_status WHERE VARIABLE_NAME = 'Uptime'").Scan(uptime)
 	switch {
