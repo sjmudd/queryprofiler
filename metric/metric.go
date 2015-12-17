@@ -1,3 +1,4 @@
+/*
 Copyright (c) 2015, Simon J Mudd
 All rights reserved.
 
@@ -21,4 +22,81 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
+package metric
+
+// we probably can do this with an outside routine but for now this gives me some numbers
+
+import (
+	"math"
+)
+
+// we want to get a series of Metricss and then do some number crunching on them.
+//
+
+type Values []float64
+type NamedMetrics map[string]Values
+
+func (m Values) Min() float64 {
+	if len(m) == 0 {
+		return 0
+	}
+	min := float64(999999999)
+	for i := range m {
+		if m[i] < min {
+			min = m[i]
+		}
+	}
+	return min
+}
+
+func (m Values) Max() float64 {
+	if len(m) == 0 {
+		return 0
+	}
+	max := float64(-999999999)
+	for i := range m {
+		if m[i] > max {
+			max = m[i]
+		}
+	}
+	return max
+}
+
+func (m Values) Avg() float64 {
+	if len(m) == 0 {
+		return 0
+	}
+	var avg, sum float64
+	count := 0
+
+	for i := range m {
+		sum += m[i]
+		count++
+	}
+
+	if count > 0 {
+		avg = sum / float64(count)
+	}
+
+	return avg
+}
+
+// sqrt( sum (x - mean)^ 2 / n )
+func (m Values) StdDev() float64 {
+	if len(m) == 0 {
+		return 0
+	}
+	var sum, mean float64
+
+	if len(m) == 0 {
+		return 0
+	}
+	mean = m.Avg()
+	for i := range m {
+		sum += math.Pow(m[i]-mean, 2)
+	}
+	sum /= float64(len(m))
+	return math.Sqrt(sum)
+}

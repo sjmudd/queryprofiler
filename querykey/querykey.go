@@ -1,3 +1,4 @@
+/*
 Copyright (c) 2015, Simon J Mudd
 All rights reserved.
 
@@ -21,4 +22,31 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
+// This is to hold a cached set of digest of queries
+package querykey
+
+type QueryKey struct {
+	digest string
+	schema string
+}
+
+func NewQueryKey(aDigest, aSchema string) QueryKey {
+	return QueryKey{digest: aDigest, schema: aSchema}
+}
+
+func (aQueryKey QueryKey) String() string {
+	if aQueryKey.schema != "" {
+		return aQueryKey.digest + "." + aQueryKey.schema
+	}
+	return aQueryKey.digest
+}
+
+func (aQueryKey QueryKey) Digest() string {
+	return aQueryKey.digest
+}
+
+func (aQueryKey QueryKey) Schema() string {
+	return aQueryKey.schema
+}

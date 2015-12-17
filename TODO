@@ -1,0 +1,55 @@
+TODO LIST
+=========
+
+1. compare metrics (percentage variation etc)
+2. add the other missing metrics which are in the digest table
+3. get the errors and warnings from 
+
+root@localhost [performance_schema]> select * from events_statements_current   limit 1\G
+*************************** 1. row ***************************
+              THREAD_ID: 33
+               EVENT_ID: 593
+           END_EVENT_ID: NULL
+             EVENT_NAME: statement/sql/select
+                 SOURCE: socket_connection.cc:98
+            TIMER_START: 169478783373902000
+              TIMER_END: 169478791353084000
+             TIMER_WAIT: 7979182000
+              LOCK_TIME: 177000000
+               SQL_TEXT: select * from events_statements_current   limit 1
+                 DIGEST: NULL <==========
+            DIGEST_TEXT: NULL
+         CURRENT_SCHEMA: performance_schema 
+            OBJECT_TYPE: NULL
+          OBJECT_SCHEMA: NULL <=======
+            OBJECT_NAME: NULL
+  OBJECT_INSTANCE_BEGIN: NULL
+            MYSQL_ERRNO: 0    <========
+      RETURNED_SQLSTATE: NULL <========
+           MESSAGE_TEXT: NULL <========
+                 ERRORS: 0
+               WARNINGS: 0
+          ROWS_AFFECTED: 0
+              ROWS_SENT: 0
+          ROWS_EXAMINED: 0
+CREATED_TMP_DISK_TABLES: 0
+     CREATED_TMP_TABLES: 0
+       SELECT_FULL_JOIN: 0
+ SELECT_FULL_RANGE_JOIN: 0
+           SELECT_RANGE: 0
+     SELECT_RANGE_CHECK: 0
+            SELECT_SCAN: 1
+      SORT_MERGE_PASSES: 0
+             SORT_RANGE: 0
+              SORT_ROWS: 0
+              SORT_SCAN: 0
+          NO_INDEX_USED: 1
+     NO_GOOD_INDEX_USED: 0
+       NESTING_EVENT_ID: NULL
+     NESTING_EVENT_TYPE: NULL
+    NESTING_EVENT_LEVEL: 0
+1 row in set (0.01 sec)
+
+or use history table(s)
+
+so need to collect the DIGEST and match against that.

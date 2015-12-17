@@ -1,0 +1,127 @@
+// Return the rows obtained from the query as a slice.
+// See: http://bugs.mysql.com/bug.php?id=79533
+// While this table is supposed to have a row per DIGEST / SCHEMA_NAME it does not
+// so to ensure ths we need to collect all rows and then merge in the changes to generate
+// a single row. Consequently store into a hash, and if you find duplicates adjust
+// the final row, but finally return clean slice
+func Collect(dbh *sql.DB, ignorePerformanceSchema bool, queryFilter string) (Collection, error) {
+	// record when we collected the data
+	var (
+		collection Collection
+		err        error
+		result     *sql.Rows
+	)
+
+	query := `
+SELECT	MD5(DIGEST_TEXT) AS 'MD5_DIGEST',
+	SCHEMA_NAME,
+/*	DIGEST, */
+	DIGEST_TEXT,
+	COUNT_STAR,
+	SUM_TIMER_WAIT /* ,
+	MIN_TIMER_WAIT,
+	AVG_TIMER_WAIT,
+	MAX_TIMER_WAIT,
+	SUM_LOCK_TIME,
+	SUM_ERRORS,
+	SUM_WARNINGS,
+	SUM_ROWS_AFFECTED,
+	SUM_ROWS_SENT,
+	SUM_ROWS_EXAMINED,
+	SUM_CREATED_TMP_DISK_TABLES,
+	SUM_CREATED_TMP_TABLES,
+	SUM_SELECT_FULL_JOIN,
+	SUM_SELECT_FULL_RANGE_JOIN,
+	SUM_SELECT_RANGE,
+	SUM_SELECT_RANGE_CHECK,
+	SUM_SELECT_SCAN,
+	SUM_SORT_MERGE_PASSES,
+	SUM_SORT_RANGE,
+	SUM_SORT_ROWS,
+	SUM_SORT_SCAN,
+	SUM_NO_INDEX_USED,
+	SUM_NO_GOOD_INDEX_USED,
+	FIRST_SEEN,
+	LAST_SEEN */
+FROM	events_statements_summary_by_digest
+`
+
+	if queryFilter != "" {
+		query += ` WHERE DIGEST_TEXT LIKE ?`
+		// log.Println("Query:", query)
+		result, err = dbh.Query(query, "%"+queryFilter+"%") // this is ugly having 2 code-paths
+	} else {
+		// log.Println("Query:", query)
+		result, err = dbh.Query(query) // this is ugly having 2 code-paths
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	collection.CollectedTime = time.Now()
+
+	defer result.Close()
+
+	//	var i int
+	for result.Next() {
+		var row EventsStatementsSummaryByDigest
+		var nullableMd5Digest, nullableSchemaName, nullableDigestText sql.NullString // groan
+		var md5Digest, schemaName, digestText string
+
+		if err := result.Scan(
+			&nullableMd5Digest,
+			&nullableSchemaName,
+			&nullableDigestText,
+			&row.COUNT_STAR,
+			&row.SUM_TIMER_WAIT); err != nil {
+			/*
+				&row.MIN_TIMER_WAIT,
+				&row.AVG_TIMER_WAIT,
+				&row.MAX_TIMER_WAIT,
+				&row.SUM_LOCK_TIME,
+				&row.SUM_ERRORS,
+				&row.SUM_WARNINGS,
+				&row.SUM_ROWS_AFFECTED,
+				&row.SUM_ROWS_SENT,
+				&row.SUM_ROWS_EXAMINED,
+				&row.SUM_CREATED_TMP_DISK_TABLES,
+				&row.SUM_CREATED_TMP_TABLES,
+				&row.SUM_SELECT_FULL_JOIN,
+				&row.SUM_SELECT_FULL_RANGE_JOIN,
+				&row.SUM_SELECT_RANGE,
+				&row.SUM_SELECT_RANGE_CHECK,
+				&row.SUM_SELECT_SCAN,
+				&row.SUM_SORT_MERGE_PASSES,
+				&row.SUM_SORT_RANGE,
+				&row.SUM_SORT_ROWS,
+				&row.SUM_SORT_SCAN,
+				&row.SUM_NO_INDEX_USED,
+				&row.SUM_NO_GOOD_INDEX_USED,
+				&row.FIRST_SEEN,
+				&row.LAST_SEEN  ); err != nil { */
+			log.Fatal(err)
+		}
+
+		md5Digest = nullStringToString(nullableMd5Digest)
+		schemaName = nullStringToString(nullableSchemaName)
+		digestText = nullStringToString(nullableDigestText)
+		key := querykey.NewQueryKey(md5Digest, schemaName)
+
+		row.Key = key
+
+		querykeycache.Put(key, digestText)
+
+		if ignorePerformanceSchema && (row.Key.Schema() == "performance_schema") {
+			// log.Println("dropping row:", row)
+		} else {
+			collection.Rows = append(collection.Rows, row)
+		}
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// log.Println(fmt.Sprintf("Collected() collected %d rows", collection.Len()))
+
+	return collection, err
+}
