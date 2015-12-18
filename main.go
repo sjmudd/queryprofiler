@@ -244,13 +244,12 @@ func main() {
 	}
 
 	/********************************************************************
-	** We now have the top queries (in topKeys) so collect metrics      *
-	*  from the samples for these specific queries and then report them *
-	*  to the user. (including comparing the values.                    *
+	** We now have the top queries (in topKeys).                        *
+	*  Collect metrics from the samples for these specific queries and  *
+	*  then report them to the user.                                    *
 	*********************************************************************/
 
 	log.Println("=== Phase IV ===")
 	log.Println("Printing metrics from calculated samples")
-
 	samples.CompareMetrics(connections, topKeys)
 }
