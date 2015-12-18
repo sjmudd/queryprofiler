@@ -167,6 +167,7 @@ func main() {
 	if len(flag.Args()) == 0 {
 		fmt.Println("Usage: ", os.Args[0], "[<options>] <dsn1> [<dsn2> ...]")
 		fmt.Println("")
+		fmt.Println("Dsn is the Go dsn format such as: user:pass@tcp(host:3306)/performance_schema")
 		fmt.Println("Flags:")
 		fmt.Println(fmt.Sprintf("--ignore-performance-schema   ignores queries using performance_schema. Default: %v", defaultIgnorePerformanceSchema))
 		fmt.Println(fmt.Sprintf("--interval=X                  interval to collect data. Default: %v", defaultInterval))
