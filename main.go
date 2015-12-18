@@ -154,7 +154,6 @@ func main() {
 		iterations              int
 		queryFilter             string
 		samples                 sample.SamplesSlice
-		test                    bool
 		topN                    int
 	)
 
@@ -163,45 +162,31 @@ func main() {
 	flag.IntVar(&iterations, "iterations", defaultIterations, "number of iterations to collect from each connection")
 	flag.BoolVar(&ignorePerformanceSchema, "ignore-performance-schema", defaultIgnorePerformanceSchema, "do we ignore performance_schema queries")
 	flag.IntVar(&topN, "top-n", defaultTopN, "the top-n queries to show results for")
-	flag.BoolVar(&test, "test", false, "use a test data set for testing")
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
-		log.Println("Usage: ", os.Args[0], "[--ignore-performance-schema] [--interval=<seconds>] [--iterations=<count>] <dsn1> [<dsn2> ...]")
-		log.Println("Usage: ", os.Args[0], "[--test]  does testing with a test data set")
+		fmt.Println("Usage: ", os.Args[0], "[<options>] <dsn1> [<dsn2> ...]")
+		fmt.Println("")
+		fmt.Println("Flags:")
+		fmt.Println(fmt.Sprintf("--ignore-performance-schema   ignores queries using performance_schema. Default: %v", defaultIgnorePerformanceSchema))
+		fmt.Println(fmt.Sprintf("--interval=X                  interval to collect data. Default: %v", defaultInterval))
+		fmt.Println(fmt.Sprintf("--iterations=X                number of collections to make. Should be a minimum of 2. Default: %v", defaultIterations))
+		fmt.Println(fmt.Sprintf("--query-filter=X              regexp to use when filtering queries. Default: '%v'", defaultQueryFilter))
+		fmt.Println(fmt.Sprintf("--top-n=X                     show the top N queries by query elapsed time. Default: %v", defaultTopN))
 		os.Exit(1)
 	}
 
-	if !test {
-		log.Println(fmt.Sprintf("Configuration: Showing top %d queries (by total elapsed time)", topN))
-		log.Println(fmt.Sprintf("Configuration: Collecting %d metrics every %d second(s)", iterations, interval))
-		log.Println(fmt.Sprintf("Configuration: Query Filter: %s", queryFilter))
-		dsns = flag.Args()
+	log.Println(fmt.Sprintf("Configuration: Showing top %d queries (by total elapsed time)", topN))
+	log.Println(fmt.Sprintf("Configuration: Collecting %d metrics every %d second(s)", iterations, interval))
+	log.Println(fmt.Sprintf("Configuration: Query Filter: %s", queryFilter))
+	dsns = flag.Args()
 
-		// now start to do stuff
-		log.Println("=== Phase I ===")
-		connections = connect(dsns)
-		log.Println("=== Phase II ===")
-		collections = collect(connections, iterations, interval, ignorePerformanceSchema, queryFilter)
-		connections.Close()
-	} else {
-		log.Println("Configuration: test setup")
-		dsns = []string{"testing1", "testing2"}
-		connections = connection.Connections{nil, nil}
-		collections = []collection.Collections{{ // double braces are deliberate!
-			//			{CollectedTime: time.Now(), Rows: {
-			//					{{"A", "QueryA"}, 100, 100000 },
-			//					{{"A", "QueryA"}, 100, 100000 },
-			//				},
-			//			},
-			{CollectedTime: time.Now(), Rows: nil},
-			{CollectedTime: time.Now(), Rows: nil},
-		},
-			{
-				{CollectedTime: time.Now(), Rows: nil},
-				{CollectedTime: time.Now(), Rows: nil},
-			}}
-	}
+	// now start to do stuff
+	log.Println("=== Phase I ===")
+	connections = connect(dsns)
+	log.Println("=== Phase II ===")
+	collections = collect(connections, iterations, interval, ignorePerformanceSchema, queryFilter)
+	connections.Close()
 
 	// show collection amounts
 	log.Println("Collection sizes:")
@@ -245,21 +230,10 @@ func main() {
 	var j int
 	for i := 0; i < topN; i++ {
 		if len(sample.Rows) > 1 {
-//			if j == 0 {
-//				log.Println("Top queries (in collection interval) are:")
-//			}
 			j++
 
 			r := sample.Rows[i]
-//			query, _ := querycache.Get(r.Key)
 			topKeys = append(topKeys, r.Key)
-
-//			log.Println(fmt.Sprintf("Query %d: [%s] time/count: %d/%d: query: %s",
-//				j,
-//				r.Key,
-//				r.SUM_TIMER_WAIT,
-//				r.COUNT_STAR,
-//				query))
 		}
 	}
 	if j == 0 {
