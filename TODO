@@ -1,6 +1,7 @@
 TODO LIST
 =========
 
+0. record the collection time
 1. compare metrics (percentage variation etc)
 2. add the other missing metrics which are in the digest table
 3. get the errors and warnings from 

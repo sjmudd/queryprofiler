@@ -36,12 +36,11 @@ import (
 	"sync"
 	"time"
 
-	//	"github.com/sjmudd/ps-top/connector"
 	"github.com/sjmudd/queryprofiler/collection"
 	"github.com/sjmudd/queryprofiler/connection"
-//	"github.com/sjmudd/queryprofiler/querycache"
 	"github.com/sjmudd/queryprofiler/querykey"
 	"github.com/sjmudd/queryprofiler/sample"
+	"github.com/sjmudd/queryprofiler/version"
 )
 
 const (
@@ -165,14 +164,18 @@ func main() {
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
-		fmt.Println("Usage: ", os.Args[0], "[<options>] <dsn1> [<dsn2> ...]")
+		fmt.Println("Usage of : ", os.Args[0], "[<flags>] <dsn1> [<dsn2> ...]")
 		fmt.Println("")
-		fmt.Println("Flags:")
-		fmt.Println(fmt.Sprintf("--ignore-performance-schema   ignores queries using performance_schema. Default: %v", defaultIgnorePerformanceSchema))
-		fmt.Println(fmt.Sprintf("--interval=X                  interval to collect data. Default: %v", defaultInterval))
-		fmt.Println(fmt.Sprintf("--iterations=X                number of collections to make. Should be a minimum of 2. Default: %v", defaultIterations))
-		fmt.Println(fmt.Sprintf("--query-filter=X              regexp to use when filtering queries. Default: '%v'", defaultQueryFilter))
-		fmt.Println(fmt.Sprintf("--top-n=X                     show the top N queries by query elapsed time. Default: %v", defaultTopN))
+		fmt.Println("command line arguments:")
+		fmt.Println("  <dsn1> [<dsn2> ...]")
+		fmt.Println("")
+		fmt.Println("flags:")
+		fmt.Println(fmt.Sprintf("  -ignore-performance-schema   ignores queries using performance_schema. Default: %v", defaultIgnorePerformanceSchema))
+		fmt.Println(fmt.Sprintf("  -interval int                interval to collect data. Default: %v", defaultInterval))
+		fmt.Println(fmt.Sprintf("  -iterations int              number of collections to make. Should be a minimum of 2. Default: %v", defaultIterations))
+		fmt.Println(fmt.Sprintf("  -query-filter string         regexp to use when filtering queries. Default: '%v'", defaultQueryFilter))
+		fmt.Println(fmt.Sprintf("  -top-n int                   show the top N queries by query elapsed time. Default: %v", defaultTopN))
+		fmt.Println(fmt.Sprintf("  -version                     show version of " + os.Args[0] + ". Currently " + version.Version()))
 		os.Exit(1)
 	}
 
