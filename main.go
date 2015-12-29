@@ -168,6 +168,7 @@ func main() {
 		fmt.Println("")
 		fmt.Println("command line arguments:")
 		fmt.Println("  <dsn1> [<dsn2> ...]")
+		fmt.Println("Dsn is the Go dsn format such as: user:pass@tcp(host:3306)/performance_schema")
 		fmt.Println("")
 		fmt.Println("flags:")
 		fmt.Println(fmt.Sprintf("  -ignore-performance-schema   ignores queries using performance_schema. Default: %v", defaultIgnorePerformanceSchema))

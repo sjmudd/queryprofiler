@@ -1,0 +1,97 @@
+$ queryprofiler --interval=10  'someuser:password@tcp(test.example.com:3306)/performance_schema'
+2015/12/24 15:37:55 Configuration: Showing top 5 queries (by total elapsed time)
+2015/12/24 15:37:55 Configuration: Collecting 10 metrics every 10 second(s)
+2015/12/24 15:37:55 Configuration: Query Filter: 
+2015/12/24 15:37:55 === Phase I ===
+2015/12/24 15:37:55 Connecting to 1 servers...
+2015/12/24 15:37:55 0: 'someuser'@'test.example.com' connected. Version: 5.6.24-log
+2015/12/24 15:37:55 === Phase II ===
+2015/12/24 15:37:55 Collecting data 10 times...
+2015/12/24 15:37:55   1: Collected rows: 0: 1484
+2015/12/24 15:38:05   2: Collected rows: 0: 1484
+2015/12/24 15:38:15   3: Collected rows: 0: 1484
+2015/12/24 15:38:26   4: Collected rows: 0: 1485
+2015/12/24 15:38:36   5: Collected rows: 0: 1485
+2015/12/24 15:38:47   6: Collected rows: 0: 1485
+2015/12/24 15:38:57   7: Collected rows: 0: 1486
+2015/12/24 15:39:07   8: Collected rows: 0: 1486
+2015/12/24 15:39:17   9: Collected rows: 0: 1486
+2015/12/24 15:39:27   10: Collected rows: 0: 1486
+2015/12/24 15:39:37 Collecting finished.
+2015/12/24 15:39:37 Collection sizes:
+2015/12/24 15:39:37 0: Have 10 entries, first entry: 1484 rows, last entry: 1486 rows
+2015/12/24 15:39:37 Converting collection information to samples...
+2015/12/24 15:39:37 0: Generated 9 sample(s)
+2015/12/24 15:39:37 === Phase III ===
+2015/12/24 15:39:37 Determining the longest running queries over collection period...
+2015/12/24 15:39:37 3.1 Making a single sample from the first/last collections of connection: 'someuser'@'test.example.com'
+2015/12/24 15:39:37 3.2 Sorting results
+2015/12/24 15:39:37 === Phase IV ===
+2015/12/24 15:39:37 Printing metrics from calculated samples
+2015/12/24 15:39:37 Looking at top 5 queries
+2015/12/24 15:39:37 Query 1: SELECT `MD5` ( `DIGEST_TEXT` ) AS ? , SCHEMA_NAME , `DIGEST_TEXT` , `COUNT_STAR` , `SUM_TIMER_WAIT` , `SUM_ERRORS` , `SUM_WARNINGS` , `SUM_ROWS_AFFECTED` , `SUM_ROWS_SENT` , `SUM_ROWS_EXAMINED` , `SUM_SELECT_SCAN` , `SUM_NO_INDEX_USED` , `SUM_NO_GOOD_INDEX_USED` FROM `events_statements_summary_by_digest` 
+2015/12/24 15:39:37 Server:            'someuser'@'test.example.com'                
+2015/12/24 15:39:37   Avg queries:      1.00, σ 0                              
+2015/12/24 15:39:37   Avg QPS:          0.0979 qps, σ 0.003037                 
+2015/12/24 15:39:37   Avg Latency:      48.75 ms, σ 15.39 ms                   
+2015/12/24 15:39:37   Avg errors:       0, σ 0                                 
+2015/12/24 15:39:37   Avg warnings:     0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsAffected: 0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsSent:     1.49 k, σ 0.816                        
+2015/12/24 15:39:37   Avg RowsExamined: 1.49 k, σ 0.816                        
+2015/12/24 15:39:37   Avg SelectScans:  1.00, σ 0                              
+2015/12/24 15:39:37   Avg NoIndexUsed:  1.00, σ 0                              
+2015/12/24 15:39:37   Avg NoGoodIndex:  0, σ 0                                 
+2015/12/24 15:39:37 Query 2: SELECT `option_name` , `option_value` FROM `wp_options` WHERE `autoload` = ? 
+2015/12/24 15:39:37 Server:            'someuser'@'test.example.com'                
+2015/12/24 15:39:37   Avg queries:      3.88, σ 1.27                           
+2015/12/24 15:39:37   Avg QPS:          0.381 qps, σ 0.129                     
+2015/12/24 15:39:37   Avg Latency:      6.683 ms, σ 1.479 ms                   
+2015/12/24 15:39:37   Avg errors:       0, σ 0                                 
+2015/12/24 15:39:37   Avg warnings:     0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsAffected: 0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsSent:     1.07 k, σ 351                          
+2015/12/24 15:39:37   Avg RowsExamined: 1.59 k, σ 521                          
+2015/12/24 15:39:37   Avg SelectScans:  3.88, σ 1.27                           
+2015/12/24 15:39:37   Avg NoIndexUsed:  3.88, σ 1.27                           
+2015/12/24 15:39:37   Avg NoGoodIndex:  0, σ 0                                 
+2015/12/24 15:39:37 Query 3: SELECT `option_value` FROM `wp_options` WHERE `option_name` = ? LIMIT ? 
+2015/12/24 15:39:37 Server:            'someuser'@'test.example.com'                
+2015/12/24 15:39:37   Avg queries:      82.6, σ 24.7                           
+2015/12/24 15:39:37   Avg QPS:          8.12 qps, σ 2.53                       
+2015/12/24 15:39:37   Avg Latency:      214.4 µs, σ 10.93 µs                   
+2015/12/24 15:39:37   Avg errors:       0, σ 0                                 
+2015/12/24 15:39:37   Avg warnings:     0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsAffected: 0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsSent:     8.75, σ 4.24                           
+2015/12/24 15:39:37   Avg RowsExamined: 8.75, σ 4.24                           
+2015/12/24 15:39:37   Avg SelectScans:  0, σ 0                                 
+2015/12/24 15:39:37   Avg NoIndexUsed:  0, σ 0                                 
+2015/12/24 15:39:37   Avg NoGoodIndex:  0, σ 0                                 
+2015/12/24 15:39:37 Query 4: UPDATE `wp_options` SET `option_value` = ? WHERE `option_name` = ? 
+2015/12/24 15:39:37 Server:            'someuser'@'test.example.com'                
+2015/12/24 15:39:37   Avg queries:      2.00, σ 0                              
+2015/12/24 15:39:37   Avg QPS:          0.199 qps, σ 0                         
+2015/12/24 15:39:37   Avg Latency:      41.62 ms, σ 0.000000 s                 
+2015/12/24 15:39:37   Avg errors:       0, σ 0                                 
+2015/12/24 15:39:37   Avg warnings:     0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsAffected: 2.00, σ 0                              
+2015/12/24 15:39:37   Avg RowsSent:     0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsExamined: 2.00, σ 0                              
+2015/12/24 15:39:37   Avg SelectScans:  0, σ 0                                 
+2015/12/24 15:39:37   Avg NoIndexUsed:  0, σ 0                                 
+2015/12/24 15:39:37   Avg NoGoodIndex:  0, σ 0                                 
+2015/12/24 15:39:37 Query 5: SELECT `t` . * , `tt` . * FROM `wp_terms` AS `t` INNER JOIN `wp_term_taxonomy` AS `tt` ON `t` . `term_id` = `tt` . `term_id` WHERE `tt` . `taxonomy` IN (?) ORDER BY `t` . `name` ASC 
+2015/12/24 15:39:37 Server:            'someuser'@'test.example.com'                
+2015/12/24 15:39:37   Avg queries:      1.86, σ 0.833                          
+2015/12/24 15:39:37   Avg QPS:          0.182 qps, σ 0.0831                    
+2015/12/24 15:39:37   Avg Latency:      2.047 ms, σ 29.77 µs                   
+2015/12/24 15:39:37   Avg errors:       0, σ 0                                 
+2015/12/24 15:39:37   Avg warnings:     0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsAffected: 0, σ 0                                 
+2015/12/24 15:39:37   Avg RowsSent:     13.0, σ 5.83                           
+2015/12/24 15:39:37   Avg RowsExamined: 52.0, σ 23.3                           
+2015/12/24 15:39:37   Avg SelectScans:  0, σ 0                                 
+2015/12/24 15:39:37   Avg NoIndexUsed:  0, σ 0                                 
+2015/12/24 15:39:37   Avg NoGoodIndex:  0, σ 0                                 
+$ 
