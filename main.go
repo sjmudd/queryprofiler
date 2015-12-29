@@ -154,6 +154,7 @@ func main() {
 		queryFilter             string
 		samples                 sample.SamplesSlice
 		topN                    int
+		wantVersion             bool
 	)
 
 	flag.StringVar(&queryFilter, "query-filter", defaultQueryFilter, "Filter queries matching this regexp")
@@ -161,10 +162,16 @@ func main() {
 	flag.IntVar(&iterations, "iterations", defaultIterations, "number of iterations to collect from each connection")
 	flag.BoolVar(&ignorePerformanceSchema, "ignore-performance-schema", defaultIgnorePerformanceSchema, "do we ignore performance_schema queries")
 	flag.IntVar(&topN, "top-n", defaultTopN, "the top-n queries to show results for")
+	flag.BoolVar(&wantVersion, "version", false, "request version of queryprofiler")
 	flag.Parse()
 
+	if wantVersion {
+		fmt.Println(os.Args[0], "version", version.Version())
+		os.Exit(0)
+	}
+
 	if len(flag.Args()) == 0 {
-		fmt.Println("Usage of : ", os.Args[0], "[<flags>] <dsn1> [<dsn2> ...]")
+		fmt.Println("Usage of", os.Args[0], ":", os.Args[0], "[<flags>] <dsn1> [<dsn2> ...]")
 		fmt.Println("")
 		fmt.Println("command line arguments:")
 		fmt.Println("  <dsn1> [<dsn2> ...]")
